@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
 /* int n_free(void *pp, int debug):
  * In order to be able to set the freed pointer to NULL we need to use a pointer to pointer variable */
 int n_free(void **pp) {
-				/* Have to check the pointer to pointer first: */
+			/* Have to check the pointer to pointer first: */
 	if ( pp == NULL ) {
 		fprintf(stderr,
 				"ERROR! pp == NULL!\n");
