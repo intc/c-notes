@@ -7,12 +7,12 @@ DEBUG_INFO="-ggdb"
 CC="gcc"
 BNAME="float128"
 CFLAGS="-std=c11\
-    -fomit-frame-pointer\
-    -Wall\
-    -Wmissing-prototypes\
-    -Wstrict-prototypes\
-    -Wextra\
-    -Wpedantic"
+	-fomit-frame-pointer\
+	-Wall\
+	-Wmissing-prototypes\
+	-Wstrict-prototypes\
+	-Wextra\
+	-Wpedantic"
 LIBS="-lquadmath"
 
 SRC="${BNAME}.c"
@@ -28,10 +28,10 @@ eecho() { >&2 echo $@; }
 eecho "Building: ${SRC} -> ${BNAME}"; eecho
 
 BL="${CC} ${D_DEBUG} -D_BNAME=\"${BNAME}\" ${DEBUG_INFO}\
-    ${CFLAGS}\
+	${CFLAGS}\
 	${LIBS}\
-    ${SRC}\
-    -o ${BNAME}"
+	${SRC}\
+	-o ${BNAME}"
 
 eecho "${BL}"; eecho
 
