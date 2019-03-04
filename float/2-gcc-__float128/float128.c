@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <quadmath.h>
 #include <string.h>
+#include <assert.h>
 #define F128_SZ 64
 
 int main(void) {
@@ -17,14 +18,25 @@ int main(void) {
 	size_t p = 0;
 
 	for ( unsigned n = 0; n < 3; n++ ) {
-		quadmath_snprintf(str[n], F128_SZ, "%.1Qf", f[n]);
+
+		int qsnp_r = quadmath_snprintf(str[n], F128_SZ, "%.1Qf", f[n]);
+		if ( qsnp_r >= F128_SZ ) {
+			fprintf(stderr, "WARNING: Floating point output was truncated\n");
+		} else if ( qsnp_r < 0 ) {
+			fprintf(stderr, "ERROR: Floating point output failed\n");
+			assert(0);
+		}
+
 		size_t t = strlen(str[n]); if ( p < t ) p = t;
 	}
-	
+
 	char frmt[100];
+			/* Create format string
+			 * + Right aligned rows with total width of p + 1
+			 * + '%%' translates to a single '%' */
 	snprintf(frmt, sizeof(frmt), " %%%lus\n-%%%lus\n\n=%%%lus\n", p, p, p);
 	printf(frmt, str[0], str[1], str[2]);
-	
+
 	return 0;
 
 }
@@ -33,7 +45,7 @@ int main(void) {
  *   + https://gcc.gnu.org/onlinedocs/gcc/Floating-Types.html
  *
  *   Notes
- *   - On Gentoo libquadmath requires USE="fortran" (for gcc).
+ *   + On Gentoo libquadmath requires USE="fortran" (for gcc).
  *
  *   (C) Antti Antinoja, 2019
  */
