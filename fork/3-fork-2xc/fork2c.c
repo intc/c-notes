@@ -121,16 +121,16 @@ void producer_write(int fd, char *msg) {
 void stdout_connect_to(int fd) {
 #ifdef _A_TEST
 			/* -A- */
-	printf("\n");
+	/* printf("\n"); */
 #endif
-			/* close stdout */
-	close(STDOUT_FILENO);
-			/* Open STDOUT_FILENO as fd */
+			/* Open STDOUT_FILENO as fd.
+			 * (no separate close(STDOUT_FILENO) is required before this
+			 * since dup2 does it for us!) */
 	if ( dup2(fd, STDOUT_FILENO) == -1 )
 		perror ("dup2 failed");
 #ifdef _A_TEST
-			/* Why this outputs ONLY when there is printf to stdout
-			 * BEFORE we close & dup2 ??? */
+			/* Why this outputs ONLY when there is a printf (see: -A- ) to stdout
+			 * BEFORE we dup2 ??? */
 	printf("Attached stdout (%i) to piped fd %i\n", STDOUT_FILENO, fd);
 #endif
 }
