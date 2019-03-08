@@ -1,14 +1,9 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/wait.h>
-#include <string.h>
-#include <inttypes.h>
-#include <errno.h>
+#include <sys/wait.h>        /* waitpid */
 #define _R_ 0
 #define _W_ 1
-#define MSG_SZ 201
-#define MSG_MAX MSG_SZ - 1
 
 int main(void)
 {
