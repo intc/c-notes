@@ -10,7 +10,6 @@
 #define _W_ 1
 #define MSG_SZ 201
 #define MSG_MAX MSG_SZ - 1
-#define _A_TEST
 
 const int _exec=1;
 const int _system=1;
@@ -39,8 +38,9 @@ int main(void)
 	if( (c_pid = fork()) == 0 )
 		consumer(des_p);
 
-			/* Finalize */
+			/* Close the pipe since it's not accessed by the parent */
 	close(des_p[_R_]); close(des_p[_W_]);
+
 	fprintf(stderr, "  Parent: Waiting for %i\n", p_pid);
 	fprintf(stderr, "  %i - ready!\n",
 			waitpid(p_pid, NULL, 0));
@@ -54,27 +54,28 @@ int main(void)
 
 void producer(int *des_p){
 	const int msgl = 101; char msg[msgl];
-			/* This child don't use Read end of the pipe. Let's close it. */
+			/* This child don't use read end of the pipe. Let's close it. */
 	close(des_p[_R_]);
+			/* No stdout redirection yet. We can use a function which can
+			 * write directly to the pipe */
 	snprintf(msg, msgl, "Producer pid: %i\n", getpid());
 	producer_write(des_p[_W_], msg);
-			/* Anything written to stdout by system or execvp will
-			 * enter *write* end of des_p. */
+			/* After this stdout redirects to the pipe */
 	stdout_connect_to(des_p[_W_]);
 
 	if ( _system ) {
-		producer_write(des_p[_W_], "Producer: Running ls -al with system()!\n");
+			/* Note the use of fflush to avoid issues caused by buffered
+			 * stdout stream mixing order of our messages */
+		printf("Producer: Running ls -al with system()!\n"); fflush(stdout);
 		int sys_r = system("ls -al");
-		snprintf(msg, msgl, "Producer: system exitted with %i\n", sys_r);
-		producer_write(des_p[_W_], msg);
+		printf("Producer: system exitted with %i\n", sys_r); fflush(stdout);
 			/* Closing the write end of pipe will create an EOF on the receiving end. */
 		if ( ! _exec ) close(des_p[_W_]);
 		sleep(2);
 	}
-			/* execvp has to be done last since execvp replaces the child
-			 * with new process image. see "man 3 execvp" */
+			/* execvp replaces the child with new process image. see "man 3 execvp" */
 	if( _exec ){
-		producer_write(des_p[_W_], "Producer: Running ls -al with execvp()!\n");
+		printf("Producer: Running ls -al with execvp()!\n"); fflush(stdout);
 			/* Close writing end of pipe since the output will be handed over to
 			 * execvp process. */
 		close(des_p[_W_]);
@@ -119,26 +120,22 @@ void producer_write(int fd, char *msg) {
 }
 
 void stdout_connect_to(int fd) {
-#ifdef _A_TEST
-			/* -A- */
-	/* printf("\n"); */
-#endif
-			/* Open STDOUT_FILENO as fd.
-			 * (no separate close(STDOUT_FILENO) is required before this
-			 * since dup2 does it for us!) */
-	if ( dup2(fd, STDOUT_FILENO) == -1 )
+			/* Close stdout and assoiate it with the write end of the pipe */
+	if ( dup2(fd, STDOUT_FILENO) == -1 ) {
 		perror ("dup2 failed");
-#ifdef _A_TEST
-			/* Why this outputs ONLY when there is a printf (see: -A- ) to stdout
-			 * BEFORE we dup2 ??? */
-	printf("Attached stdout (%i) to piped fd %i\n", STDOUT_FILENO, fd);
-#endif
+		exit(1);
+	}
 }
 
 /*   Links
  *   + wait / waitpid: https://webdocs.cs.ualberta.ca/~tony/C379/C379Labs/Lab3/wait.html
  *
  *   Notes
+ *   I read some notes that in Unix stdout and stdin are line buffered while in terminal
+ *   and block buffered otherwise (like here when working with pipes). fflush() seems to
+ *   keep things in order.
  *
- *   (C) Antti Antinoja
+ *   One could also use setbuf family of functions (see "man setbuf") to disable buffering.
+ *
+ *   (C) Antti Antinoja, 2019
  */
