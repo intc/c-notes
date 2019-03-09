@@ -2,9 +2,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/wait.h>
+			/* strnlen() */
 #include <string.h>
+			/* uintptr_t */
 #include <inttypes.h>
-#include <errno.h>
 
 #define _R_ 0
 #define _W_ 1
@@ -66,8 +67,10 @@ void producer(int *des_p){
 	if ( _system ) {
 			/* Note the use of fflush to avoid issues caused by buffered
 			 * stdout stream mixing order of our messages */
-		printf("Producer: Running ls -al with system()!\n"); fflush(stdout);
-		int sys_r = system("ls -al");
+		printf("Producer: Running \"date -R\" via system()!\n"); fflush(stdout);
+			/* system(cmd) uses fork() to create a child process (man 3 system)
+			 * that executes shell which runs the "cmd". */
+		int sys_r = system("date -R");
 		printf("Producer: system exitted with %i\n", sys_r); fflush(stdout);
 			/* Closing the write end of pipe will create an EOF on the receiving end. */
 		if ( ! _exec ) close(des_p[_W_]);
@@ -75,11 +78,11 @@ void producer(int *des_p){
 	}
 			/* execvp replaces the child with new process image. see "man 3 execvp" */
 	if( _exec ){
-		printf("Producer: Running ls -al with execvp()!\n"); fflush(stdout);
+		printf("Producer: Running \"date -R\" via execvp()!\n"); fflush(stdout);
 			/* Close writing end of pipe since the output will be handed over to
 			 * execvp process. */
 		close(des_p[_W_]);
-		char *const prog1[] = { "ls", "-al", 0};
+		char *const prog1[] = { "date", "-R", NULL};
 		execvp(*prog1, prog1);
 			/* Execution reaches this point only if execvp failed. */
 		perror("execvp of ls failed");
@@ -122,7 +125,7 @@ void producer_write(int fd, char *msg) {
 void stdout_connect_to(int fd) {
 			/* Close stdout and assoiate it with the write end of the pipe */
 	if ( dup2(fd, STDOUT_FILENO) == -1 ) {
-		perror ("dup2 failed");
+		perror ("dup2() failed");
 		exit(1);
 	}
 }
