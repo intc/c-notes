@@ -18,7 +18,7 @@ int main(void) {
 	for ( int i = 0; i < NUM_THREADS; i++) {
 		stime_arr[i] = malloc(sizeof(int));
 		*stime_arr[i] = i+1;
-		printf("*stime 0x%.18lX (%i sec.)\n", (uintptr_t) stime_arr[i], *stime_arr[i]);
+		printf("*stime 0x%.16lX (%i sec.)\n", (uintptr_t) stime_arr[i], *stime_arr[i]);
 
 		if ( pthread_create( &thread_id[i], NULL,
 				(void *) s_thread_worker,
@@ -31,9 +31,9 @@ int main(void) {
 	for ( int i = 0; i < NUM_THREADS; i++) {
 		int *t_exit_var = NULL;
 		if ( pthread_join(thread_id[i], (void **) &t_exit_var) == 0 ) {
-			printf("thread 0x%.18lX exitting\n", (uintptr_t) thread_id[i]);
-			printf("exit v 0x%.18X\n", *t_exit_var);
-			printf("*stime 0x%.18lX (i:%i)\n", (uintptr_t) stime_arr[i], i);
+			printf("thread 0x%.16lX exitting\n", (uintptr_t) thread_id[i]);
+			printf("exit v 0x%.16X\n", *t_exit_var);
+			printf("*stime 0x%.16lX (i:%i)\n", (uintptr_t) stime_arr[i], i);
 			free(t_exit_var);
 			t_exit_var = NULL;
 		} else {
@@ -54,7 +54,7 @@ int *s_thread_worker(void **int_arg) {
 
 	exit_var = malloc(sizeof(int));
 
-	printf("thread 0x%.18lX sleeping %d seconds ...\n",
+	printf("thread 0x%.16lX sleeping %d seconds ...\n",
 			(uintptr_t) pthread_self(), sleeptime);
 	
 	sleep(sleeptime);
@@ -62,8 +62,8 @@ int *s_thread_worker(void **int_arg) {
 			 * so we have a "meaningful" value for pthread_exit */
 	*exit_var = (int) (pthread_self());
 	
-	printf("\nthread 0x%.18lX awakening\n", (uintptr_t) pthread_self());
-	printf("*stime 0x%.18lX %i\n", (uintptr_t) *pp, sleeptime);
+	printf("\nthread 0x%.16lX awakening\n", (uintptr_t) pthread_self());
+	printf("*stime 0x%.16lX %i\n", (uintptr_t) *pp, sleeptime);
 			/* free & reset stime which was allocated @main() */
 	free(*pp);
 	*pp=NULL;
