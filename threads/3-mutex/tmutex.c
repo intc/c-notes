@@ -42,9 +42,9 @@ int main(void) {
 	for ( int i = 0; i < NUM_THREADS; i++) {
 		int *t_exit_var = NULL;
 		if ( pthread_join(thread_id[i], (void **) &t_exit_var) == 0 ) {
-			printf("thread 0x%.18lX exitting\n", (uintptr_t) thread_id[i]);
-			printf("exit v 0x%.18X\n", *t_exit_var);
-			printf("*thread_arr 0x%.18lX (i:%i)\n", (uintptr_t) thread_arr[i], i);
+			printf("thread 0x%.16lX exitting\n", (uintptr_t) thread_id[i]);
+			printf("exit v 0x%.16X\n", *t_exit_var);
+			printf("*thread_arr 0x%.16lX (i:%i)\n", (uintptr_t) thread_arr[i], i);
 			free(t_exit_var);
 			t_exit_var = NULL;
 		} else {
@@ -68,7 +68,7 @@ int *s_thread_worker(void **arg) {
 
 	exit_var = malloc(sizeof(int));
 
-	printf("thread 0x%.18lX id: %i shared: %i\n",
+	printf("thread 0x%.16lX id: %i shared: %i\n",
 			(uintptr_t) pthread_self(), thread_arr->id, *thread_arr->shared);
 #ifdef _NO_RACE
 			/* Activate Mutual Exclution */
@@ -93,7 +93,7 @@ int *s_thread_worker(void **arg) {
 			 * so we have a "meaningful" value for pthread_exit */
 	*exit_var = (int) (pthread_self());
 	
-	printf("\nthread id %i @ 0x%.18lX awakening\n", thread_arr->id, (uintptr_t) pthread_self());
+	printf("\nthread id %i @ 0x%.16lX awakening\n", thread_arr->id, (uintptr_t) pthread_self());
 			/* free & reset stime which was allocated @main() */
 	free(*pp);
 	*pp=NULL;
