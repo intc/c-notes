@@ -29,13 +29,13 @@ int main(void) {
 	}
 			/* Wait for the workers to exit */
 	for ( int i = 0; i < NUM_THREADS; i++) {
-		int *t_exit_val = NULL;
-		if ( pthread_join(thread_id[i], (void **) &t_exit_val) == 0 ) {
+		int *t_exit_var = NULL;
+		if ( pthread_join(thread_id[i], (void **) &t_exit_var) == 0 ) {
 			printf("thread 0x%.18lX exitting\n", (uintptr_t) thread_id[i]);
-			printf("exit v 0x%.18X\n", *t_exit_val);
+			printf("exit v 0x%.18X\n", *t_exit_var);
 			printf("*stime 0x%.18lX (i:%i)\n", (uintptr_t) stime_arr[i], i);
-			free(t_exit_val);
-			t_exit_val = NULL;
+			free(t_exit_var);
+			t_exit_var = NULL;
 		} else {
 			perror("ERROR: Joining thread");
 			assert(0);
@@ -50,9 +50,9 @@ int main(void) {
 int *s_thread_worker(void **int_arg) {
 	int **pp = (int **)int_arg;
 	int sleeptime = **pp;
-	int * exit_val = NULL;
+	int * exit_var = NULL;
 
-	exit_val = malloc(sizeof(int));
+	exit_var = malloc(sizeof(int));
 
 	printf("thread 0x%.18lX sleeping %d seconds ...\n",
 			(uintptr_t) pthread_self(), sleeptime);
@@ -60,14 +60,14 @@ int *s_thread_worker(void **int_arg) {
 	sleep(sleeptime);
 			/* Copy last 32 bits from the address of this thread
 			 * so we have a "meaningful" value for pthread_exit */
-	*exit_val = (int) (pthread_self());
+	*exit_var = (int) (pthread_self());
 	
 	printf("\nthread 0x%.18lX awakening\n", (uintptr_t) pthread_self());
 	printf("*stime 0x%.18lX %i\n", (uintptr_t) *pp, sleeptime);
 			/* free & reset stime which was allocated @main() */
 	free(*pp);
 	*pp=NULL;
-	pthread_exit((void *) exit_val);
+	pthread_exit((void *) exit_var);
 	return NULL;
 }
 
