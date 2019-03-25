@@ -6,7 +6,7 @@
 #include <stdlib.h>             /* for malloc */
 #include <inttypes.h>           /* uintptr_t, strtoul */
 #include <string.h>             /* strncpy */
-#include <math.h>				/* floor, sqrt */
+#include <math.h>               /* floor, sqrt */
 
 #define O_M 0
 #define O_X 1
@@ -56,7 +56,7 @@ int main(int argv, char **argc) {
 	pthread_t w_thread[args.num_w_threads];
 			/* prepare to devide the given min to max range (gap) for
 			 * individual worker threads */
-    unsigned long gap = args.max - args.min;
+	unsigned long gap = args.max - args.min;
 	unsigned long w_gap = gap / args.num_w_threads;
 	unsigned long reminder = gap % args.num_w_threads;
 	unsigned long w_start = args.min;
