@@ -97,7 +97,7 @@ int main(int argv, char **argc) {
 	for ( int i = 0; i < args.num_w_threads; i++ ) {
 		_slist *wl_root = NULL, *wl_node = NULL;
 		if ( pthread_join(w_thread[i], (void **) &wl_root) == 0 ) {
-			printf("thread 0x%.16lX exitting\n", (uintptr_t) w_thread[i]);
+			printf("thread 0x%.16lX exitted\n", (uintptr_t) w_thread[i]);
 			if (wl_root) {
 				wl_node = wl_root; int go = 1;
 				while ( go ) {
@@ -150,7 +150,11 @@ int *th_eratosthenes(void **int_arg) {
 
 	unsigned long sqrt_max = (unsigned long) floor( sqrt( w_args->max ) );
 
+	printf("thread 0x%.16lX sqrt_max: %lu\n",
+			(uintptr_t) pthread_self(), sqrt_max);
+
 	for ( unsigned long y = 3; y <= sqrt_max ; y++ ) {
+
 		while ( wl_root->val > y && (wl_root->val % y == 0) ) {
 			/* Root node is not a prime. Eliminate. */
 			if (wl_root->next) {
@@ -162,7 +166,7 @@ int *th_eratosthenes(void **int_arg) {
 			}
 		}
 			/* Now we have a root node which is a prime number.
-			 * Let's contune with the rest of the list */
+			 * Continue with the rest of the list (if any). */
 		if ( wl_root->next ) {
 			wl_prev = wl_root; wl_node = wl_root->next; int go = 1;
 			while ( go ) {
@@ -184,7 +188,7 @@ int *th_eratosthenes(void **int_arg) {
 			}
 		}
 	}
-			/* free & reset w_args ( was allocated @main() ) NOTE: move these to main.*/
+			/* Free & reset w_args ( was allocated @main() ) NOTE: move these to main.*/
 	free(*pp);
 	*pp=NULL;
 	pthread_exit((void *) wl_root);
@@ -240,7 +244,7 @@ void print_args(_args *args) {
  *   We use singly linked list for storing the range of numbers.
  *
  *   None prime elements are removed from the list while the range is
- *   prosessed.
+ *   processed.
  *
  *   Using multiple threads is supported.
  *
