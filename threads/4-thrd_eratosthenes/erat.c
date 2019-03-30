@@ -234,14 +234,15 @@ void print_args(_args *args) {
 }
 
 /*   Links
- *   + http://www.cs.rpi.edu/academics/courses/fall04/os/c6/index.html
+ *   + https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes
  *
  *   Notes
- *   This is largely based on the link above. Added freeing up the worker argument
- *   allocated in the main function (r20).
+ *   We use singly linked list for storing the range of numbers.
  *
- *   Also added some printf's along the way to see that the pointers are correctly
- *   dealed with.
+ *   None prime elements are removed from the list while the range is
+ *   prosessed.
+ *
+ *   Using multiple threads is supported.
  *
  *   (C) Antti Antinoja, 2019
  */
