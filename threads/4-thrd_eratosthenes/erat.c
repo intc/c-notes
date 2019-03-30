@@ -93,7 +93,7 @@ int main(int argv, char **argc) {
 		}
 	}
 
-			/* Wait for the workers to exit */
+			/* Wait for the workers to exit and output the results */
 	for ( int i = 0; i < args.num_w_threads; i++ ) {
 		_slist *wl_root = NULL, *wl_node = NULL;
 		if ( pthread_join(w_thread[i], (void **) &wl_root) == 0 ) {
@@ -147,7 +147,7 @@ int *th_eratosthenes(void **int_arg) {
 		wl_node->next = NULL; wl_prev->next = wl_node; wl_prev = wl_node;
 		wl_node->val = n;
 	}
-	
+
 	unsigned long sqrt_max = (unsigned long) floor( sqrt( w_args->max ) );
 
 	for ( unsigned long y = 3; y <= sqrt_max ; y++ ) {
@@ -217,9 +217,9 @@ int get_args(int argv, char **argc, _args *args){
 		if ( !found ) { fprintf(stderr, "Unknown option %s\n", argc[c-1]); exit (1); }
 		c = c - 2;
 	}
-			/* Ensure that we have an odd number for min */
+			/* Ensure min is odd */
 	if ( ! ( val[O_M] % 2 ) || val[O_M] < 5 ) { printf(usage); exit(1); }
-			/* Assign parced values to corresponding args members. */
+			/* Assign parsed values to corresponding args members. */
 	if ( val[O_M] ) args->min = val[O_M]; else { printf(usage); exit(1); }
 	if ( val[O_X] ) args->max = val[O_X]; else { printf(usage); exit(1); }
 	if ( val[O_T] ) args->num_w_threads = (int) val[O_T]; else args->num_w_threads = 1;
