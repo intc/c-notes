@@ -4,6 +4,9 @@
 #include <lauxlib.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <string.h>
+#include <stdlib.h>
+#include <poll.h>
 
 #ifdef _LUAJIT
 #include "luajit.h"
@@ -12,16 +15,19 @@
 #define LUA "lua"
 #endif
 
+#define LUA_FILE "./lua.lua"
+# define TRUE 1
+# define FALSE 0
+
 int file_stat_check(const char * fn);
 void lf_error_print(int load_stat, const char *fn);
+static int lua_sleep(lua_State *Ls);
+static int lua_string_print(lua_State *);
+static int lua_string_reverse(lua_State *);
 
-int main(int argc, char *argv[]) {
-
-	if ( argc != 2 ) {
-		fprintf(stderr, "Usage example: e%s [luafile.lua]\n", LUA); return 1;
-	}
+int main(void) {
 	
-	const char *fn = argv[1];
+	const char fn[] = LUA_FILE;
 	if ( file_stat_check(fn) != 0 ) {
 		fprintf(stderr, "%s - File not found\n", fn); return 1;
 	}
@@ -52,6 +58,10 @@ int main(int argc, char *argv[]) {
 	}
 #endif
 
+	lua_register(lua, "sleep", lua_sleep);
+	lua_register(lua, "string_print", lua_string_print);
+	lua_register(lua, "string_reverse", lua_string_reverse);
+
 	fprintf(stderr, "Running %s with %s:\n", fn, LUA);
 	int run_stat = lua_pcall(lua, 0, 0, 0);
 			/* http://pgl.yoyo.org/luai/i/lua_pcall */
@@ -59,6 +69,8 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "Error: %s\n", lua_tostring(lua, -1));
 			/* http://pgl.yoyo.org/luai/i/lua_tostring */
 	}
+
+	return 0;
 }
 
 int file_stat_check(const char *fn) {
@@ -82,6 +94,42 @@ void lf_error_print(int load_stat, const char *fn) {
 		default:
 			fprintf(stderr, "Unknown error.\n");
 	}
+}
+
+static int lua_sleep(lua_State *Ls){
+	int msec  = luaL_checkinteger(Ls, 1);
+	poll(NULL, 0, msec);
+	return 1;
+}
+
+static int lua_string_print(lua_State *Ls){
+	const char *str = luaL_checkstring(Ls, 1);
+	printf(str);
+	return 0;
+}
+
+static int lua_string_reverse(lua_State *Ls){
+	const char *str = luaL_checkstring(Ls, 1);
+	size_t len = strlen(str);
+	size_t x = 0;
+	int add_nl = FALSE;
+	char *new_str = malloc( sizeof(char) * len + 1 );
+	if ( str[len-1] == '\n' ) {
+		len--;
+		add_nl = TRUE;
+	}
+	while ( len-- ) {
+		new_str[x] = str[len];
+		x++;
+	}
+	if ( add_nl ) {
+		new_str[x] = '\n';
+		x++;
+	}
+	new_str[x]='\0';
+	lua_pushstring(Ls, new_str);
+	free(new_str);
+	return 1;
 }
 
 /*   Check:
