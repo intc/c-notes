@@ -129,7 +129,7 @@ static int lua_string_reverse(lua_State *Ls) {
 	size_t len = strlen(str);
 	size_t n_pos = len - 1;
 	char *new_str = malloc( sizeof(char) * len + 1 );
-			/* One needs to finish the string with NULL character in C: */
+			/* One needs to terminate the string with NULL character: */
 	new_str[len] = '\0';
 			/* In case the original string ends with new line
 			 * we terminate the new string also with new line: */
