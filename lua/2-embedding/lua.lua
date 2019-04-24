@@ -11,7 +11,7 @@ Let's go!
 ]])
 
 for n = 1, 5 do
-	local buffer="Saippukauppias says: "..n.."€ for "..n.." kilograms of soap.\n"
+	local buffer=n.."¥€ No, it never propagates if I set a gap or prevention €¥"..n.."\n"
 	--local buffer=n.." sec\n"
 	sleep(1000);
 	string_print(buffer)
