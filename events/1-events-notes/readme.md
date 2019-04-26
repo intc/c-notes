@@ -11,9 +11,9 @@
 * https://en.wikipedia.org/wiki/Epoll
 
 * Code examples:
- * https://github.com/WhaleGirl/epoll-Server-client/blob/master/epoll_server.c
-  * This looks clean and does _NOT_ implement nonblocking socket (while not checking read return for EWOULDBLOCK)
-   * see '$ man 3 read'
+  * https://github.com/WhaleGirl/epoll-Server-client/blob/master/epoll_server.c
+    * This looks clean and does _NOT_ implement nonblocking socket (while not checking read return for EWOULDBLOCK)
+     * see '$ man 3 read'
 
 ## kqueue
 
