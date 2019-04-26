@@ -9,11 +9,11 @@
 ## Functions
 
 * `man getifaddrs`
- * creates a linked list of structs describing network ifs on the local system.
+  * creates a linked list of structs describing network ifs on the local system.
 * `man htonl`
- * convert from host to network byte order
+  * convert from host to network byte order
 * `man ntohl`
- * convert from network to host byte order
+  * convert from network to host byte order
 
 ## Network Byte Order
 
