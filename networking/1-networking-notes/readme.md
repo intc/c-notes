@@ -12,5 +12,5 @@
  * creates a linked list of structs describing network ifs on the local system.
 
 ## Realted
-
-* [[events]](/intc/events/1-events-notes/readme.md)
+/intc/c-notes/tree/master/networking/1-networking-notes
+* [[events]](/../../events/1-events-notes)
