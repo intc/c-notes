@@ -13,4 +13,4 @@
 
 ## Realted
 
-* [[events]](/intc/c-notes/tree/master/events/1-events-notes/)
+* [[events]](/events/1-events-notes/)
