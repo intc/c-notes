@@ -13,4 +13,4 @@
 
 ## Realted
 
-* [[events]](/intc/events/1-notes/readme.md)
+* [[events]](/intc/events/1-events-notes/readme.md)
