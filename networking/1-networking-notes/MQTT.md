@@ -21,9 +21,12 @@
 
 ℃ = U2193, ✓ = U2713
 
-## Protocl
+## Specification
 
-### Package structure
+* http://docs.oasis-open.org/mqtt/mqtt/v5.0/cs01/mqtt-v5.0-cs01.pdf
+* http://public.dhe.ibm.com/software/dw/webservices/ws-mqtt/MQTT_V3.1_Protocol_Specific.pdf
+
+## Related links
 
 * http://www.steves-internet-guide.com/mqtt-protocol-messages-overview/
 
