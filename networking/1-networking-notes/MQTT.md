@@ -7,7 +7,7 @@
 ## Example MQTT sequence
 
 | Client<br>A | MSG            | Broker | MSG            | Client<br>B |
-| -------- | -----------------:|:------:|:----------------- | --------:|
+| -------- | -----------------:|:------:|:----------------- | -------- |
 || CONNECT ->                  |        |                   |          |
 || <- CONNACK                  |        |                   |          |
 |          |          | 25 | <- PUBLISH<br>temp/roof<br>25℃<br>✓Retain||
