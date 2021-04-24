@@ -15,24 +15,34 @@ CFLAGS="-O2\
 
 SRC="embed-lua.c"
 
-LUAJIT=$(pkg-config luajit --cflags --libs)
-LUASTD=$(pkg-config lua --cflags --libs)
-
 eecho() { >&2 echo $@; }
 
+LUAJIT=$(pkg-config luajit --cflags --libs)
+
+LUA_NAMES=(
+	"lua5.1"
+	"lua"
+)
+
+for n in "${LUA_NAMES[@]}" ; do echo "# Lua: trying pkg-config ${n}"; pkg-config ${n} && LUA_NAME=$n && break ; done
+
+if ! [ -z "${LUA_NAME}" ] ; then
+	eecho "# Found ${LUA_NAME}"
+	LUASTD=$(pkg-config ${LUA_NAME} --cflags --libs)
+fi
+
 if [ -z "${LUAJIT}" ]; then
-	eecho "Luajit was not found by pkg-config. Trying standard Lua."
 	if [ -z "${LUASTD}" ]; then
-		eecho "ERROR: Lua was not found by pkg-config. Can not contine."
-		exit 1
+		eecho "ERROR: pkg-config failed on both Lua and Luajit. Can not contine." ; exit 1
 	else
-		eecho "Using standard Lua!"
+		eecho "# Using standard Lua!"
 		LUA="${LUASTD}"
 		BNAME="elua"
 	fi
 else
+	eecho "# Using luajit!"
 	LUA="-D_LUAJIT ${LUAJIT}"
 	BNAME="eluajit"
 fi
 
-${CC} ${DEBUG} ${LUA} ${CFLAGS} ${SRC} -o ${BNAME}
+${CC} ${DEBUG} ${LUA} ${CFLAGS} ${SRC} -o ${BNAME} && eecho "# Binary is ./${BNAME}"
